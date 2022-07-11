@@ -1,5 +1,3 @@
-package input
-
 enum class Status(val showHelp: Boolean = false) {
     SUCCESS, // command was a success
     FAILURE(true), // when a command has failed

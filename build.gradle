@@ -8,10 +8,16 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    // Kord Snapshots Repository (Optional):
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
+    implementation('dev.kord:kord-core:0.7.4')
 }
 
 test {

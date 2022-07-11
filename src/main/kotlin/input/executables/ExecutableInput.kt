@@ -1,7 +1,8 @@
-package input
+package input.executables
 
-import dev.kord.core.Kord
+import BotMain
+import Status
 
-sealed class ExecutableInput(internal val command: String) {
-    abstract suspend fun execute(kord: Kord): Status
+sealed class ExecutableInput {
+    abstract suspend fun execute(args: String, bot: BotMain): Status
 }

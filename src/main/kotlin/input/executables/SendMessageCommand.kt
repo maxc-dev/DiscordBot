@@ -2,13 +2,14 @@ package input.executables
 
 import BotMain
 import Status
+import activities.SendMessageActivity
 
-object SendMessage : ExecutableInput() {
+object SendMessageCommand : ExecutableInput() {
     /**
      * Shuts down discord bot and closes application
      */
-    override suspend fun execute(command: String, bot: BotMain): Status {
-        bot.executeActivity(SendMessage::execute)
+    override suspend fun execute(args: String, bot: BotMain): Status {
+        bot.executeActivity(SendMessageActivity(bot), args)
         return Status.SUCCESS
     }
 }

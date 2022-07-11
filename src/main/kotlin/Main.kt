@@ -1,7 +1,23 @@
-fun main(args: Array<String>) {
-    println("Hello World!")
+@file:OptIn(DelicateCoroutinesApi::class)
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+import input.InputScanner
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
+fun main() {
+    val token = TokenRetriever().retrieveToken()
+    val botMain = BotMain(token)
+
+    GlobalScope.launch {
+        botMain.start()
+    }
+
+    val inputScanner = InputScanner(botMain)
+    inputScanner.listen()
+    // application closing...
+    GlobalScope.launch {
+        botMain.stop()
+    }
+
 }
