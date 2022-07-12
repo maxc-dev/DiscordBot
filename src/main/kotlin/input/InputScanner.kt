@@ -3,7 +3,6 @@ package input
 import BotMain
 import Status
 import input.executables.ExecutableInput
-import kotlinx.coroutines.DelicateCoroutinesApi
 import logger
 import java.util.*
 
@@ -14,7 +13,7 @@ class InputScanner(private val bot: BotMain) {
         val scanner = Scanner(System.`in`)
         log.info("Enter command: ")
         while (scanner.hasNext()) {
-            val input = scanner.nextLine()
+            val input = scanner.nextLine().trim()
             val status = enact(input)
 
             // if the app is to close, return to main
@@ -23,7 +22,6 @@ class InputScanner(private val bot: BotMain) {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun enact(input: String): Status {
         if (input.isBlank()) return Status.UNKNOWN_COMMAND
 
@@ -37,9 +35,7 @@ class InputScanner(private val bot: BotMain) {
 
         //convert input to args
         val args = input.substringAfter(firstArg).trim()
-
-        // create new coroutine for executing command and return status
-        val status = bot.executeInput(args, executableCommand)
+        val status = executableCommand.execute(args, bot)
         log.info(status.statement())
         return status
     }
