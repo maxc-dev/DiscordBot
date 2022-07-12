@@ -9,7 +9,6 @@ object SendMessageCommand : ExecutableInput() {
      * Shuts down discord bot and closes application
      */
     override suspend fun execute(args: String, bot: BotMain): Status {
-        bot.executeActivity(SendMessageActivity(bot), args)
-        return Status.SUCCESS
+        return bot.executeActivity(SendMessageActivity(bot), args)
     }
 }

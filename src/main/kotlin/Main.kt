@@ -5,7 +5,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-fun main() {
+suspend fun main() {
     val token = TokenRetriever().retrieveToken()
     val botMain = BotMain(token)
 
@@ -15,9 +15,7 @@ fun main() {
 
     val inputScanner = InputScanner(botMain)
     inputScanner.listen()
-    // application closing...
-    GlobalScope.launch {
-        botMain.stop()
-    }
 
+    // application closes when inputScanner.listen() returns
+    botMain.stop()
 }

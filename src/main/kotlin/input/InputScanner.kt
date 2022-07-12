@@ -2,16 +2,19 @@ package input
 
 import BotMain
 import Status
+import input.executables.ExecutableInput
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import logger
 import java.util.*
 
 class InputScanner(private val bot: BotMain) {
-    fun listen() {
+    private val log = logger(this.javaClass)
+
+    suspend fun listen() {
         val scanner = Scanner(System.`in`)
+        log.info("Enter command: ")
         while (scanner.hasNext()) {
-            val input = scanner.next()
+            val input = scanner.nextLine()
             val status = enact(input)
 
             // if the app is to close, return to main
@@ -21,27 +24,29 @@ class InputScanner(private val bot: BotMain) {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun enact(input: String): Status {
-        if (input.isBlank()) return Status.UNKNOWN
+    private suspend fun enact(input: String): Status {
+        if (input.isBlank()) return Status.UNKNOWN_COMMAND
 
         val firstArg = input.plus(" ").substringBefore(" ").lowercase()
         // parse input string to command
-        val command: InputCommand = InputCommand.values().firstOrNull { it.command == firstArg } ?: return Status.UNKNOWN
+        if (!InputCommandManager.inputMapper.containsKey(firstArg)) {
+            return Status.UNKNOWN_COMMAND
+        }
+        val executableCommand: ExecutableInput =
+            InputCommandManager.inputMapper[firstArg] ?: return Status.UNKNOWN_COMMAND
 
         //convert input to args
         val args = input.substringAfter(firstArg).trim()
 
         // create new coroutine for executing command and return status
-        var status = Status.FAILURE
-        GlobalScope.launch {
-            status = bot.executeInput(args, command.executable)
-        }
-        println(status.statement())
+        val status = bot.executeInput(args, executableCommand)
+        log.info(status.statement())
         return status
     }
 
     private fun help() {
-        println("Available commands:")
-        InputCommand.values().forEach { println(" > ${it.command}: ${it.description}") }
+        log.info(
+            "Available commands:" + InputCommand.values()
+                .joinToString(separator = "\n", prefix = "\n") { " > ${it.command}: ${it.description}" })
     }
 }
