@@ -1,21 +1,22 @@
-@file:OptIn(DelicateCoroutinesApi::class)
-
 import input.InputScanner
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 suspend fun main() {
-    val token = TokenRetriever().retrieveToken()
-    val botMain = BotMain(token)
+    Main().start()
+}
 
-    GlobalScope.launch {
+class Main {
+    private val log = logger(this.javaClass)
+
+    suspend fun start() {
+        log.info("Process started")
+        val token = TokenRetriever().retrieveToken()
+        val botMain = BotMain(token)
+
         botMain.start()
+        val inputScanner = InputScanner(botMain)
+        inputScanner.listen()
+
+        // application closes when inputScanner.listen() returns
+        botMain.stop()
     }
-
-    val inputScanner = InputScanner(botMain)
-    inputScanner.listen()
-
-    // application closes when inputScanner.listen() returns
-    botMain.stop()
 }
