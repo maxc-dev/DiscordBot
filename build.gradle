@@ -1,6 +1,7 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.20'
     id 'application'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.20'
 }
 
 group = 'dev.maxc'
@@ -17,7 +18,9 @@ repositories {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
-    implementation('dev.kord:kord-core:0.7.4')
+    implementation('dev.kord:kord-core:0.11.1')
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
+    implementation('com.github.jreddit:jreddit:1.0.3')
 }
 
 test {
