@@ -1,25 +1,35 @@
-import input.InputScanner
+import config.BotConfig
+import reddit.RedditCommandManager
 import kotlinx.coroutines.runBlocking
 
-fun main() {
-    Launcher().start()
+/**
+ * @param args Argument pattern:
+ *  - config file
+ */
+fun main(args: Array<String>) {
+    if (args.size != 1) {
+        throw IllegalArgumentException("Config file argument required only.")
+    }
+    Launcher().start(args)
 }
 
 class Launcher {
-    private val log = logger(this.javaClass)
+    private val log = logger(this::class)
 
-    fun start() = runBlocking {
-        log.info("Process started")
-        val token = TokenRetriever().retrieveToken()
+    fun start(args: Array<String>) = runBlocking {
+        log.info("Discord Bot initialization started")
 
-        val botMain = BotMain(token)
-        botMain.start() // start the bot
+        val config = BotConfig(args[0])
+        val redditCredentials = config.getRedditCredentials()
+        val redditTokenCache = config.getRedditTokenCacheFile()
+        val redditCommandMap = config.getRedditCommandMap()
+        val redditCommandManager = RedditCommandManager(redditCommandMap, redditCredentials, redditTokenCache)
 
-        val inputScanner = InputScanner(botMain)
-        inputScanner.listen()
+        val discordToken = config.getDiscordSecret()
+        val channels = config.getChannels()
+        val emojis = config.getEmojis()
 
-        // application closes when inputScanner.listen() returns
-        botMain.stop()
-        log.info("Process stopped")
+        val botMain = BotMain(discordToken, redditCommandManager, channels, emojis)
+        botMain.start()
     }
 }
