@@ -67,6 +67,7 @@ class BotMain(
                         }"
                     )
                     message.delete()
+                    return@on
                 }
 
                 try {
