@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Requis" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="MainKt" />
+    <module name="DiscordBot.main" />
+    <option name="PROGRAM_PARAMETERS" value="C:\Users\merca\Documents\discord-bot\config.json" />
+    <shortenClasspath name="NONE" />
+    <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
+      <option name="credential" />
+      <option name="region" />
+      <option name="useCurrentConnection" value="false" />
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

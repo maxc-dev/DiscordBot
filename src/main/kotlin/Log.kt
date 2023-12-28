@@ -1,6 +1,5 @@
-import java.util.logging.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import kotlin.reflect.KClass
 
-// Return logger for Java class, if companion object fix the name
-fun <T: Any> logger(forClass: Class<T>): Logger {
-    return Logger.getLogger(forClass.name)
-}
+val logger: (KClass<*>) -> Logger = { LoggerFactory.getLogger(it.java.name) }

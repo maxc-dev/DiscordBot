@@ -1,9 +1,10 @@
-package io
+package reddit
 
+import io.UnknownCommand
 import kotlinx.serialization.Serializable
 
 @Serializable
-class CommandMap(val commands: List<String>, val subs: List<String>) {
+class RedditCommandMap(val commands: List<String>, val subs: List<String>) {
     fun getSubFromCommand(cmd: String): String {
         val index = commands.indexOf(cmd)
         if (index == -1) {
