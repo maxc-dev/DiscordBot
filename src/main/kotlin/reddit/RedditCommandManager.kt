@@ -9,15 +9,21 @@ import logger
 import java.io.File
 
 
-class RedditCommandManager(private val redditCommandMap: RedditCommandMap, redditCredentials: RedditCredentials, redditTokenFile: File) {
+class RedditCommandManager(
+    private val redditCommandMap: RedditCommandMap,
+    redditCredentials: RedditCredentials,
+    redditTokenFile: File
+) {
     private val log = logger(this::class)
 
-    private val redditTokenManager = RedditTokenCreator(redditCredentials.clientId, redditCredentials.clientSecret, redditTokenFile)
+    private val redditTokenManager =
+        RedditTokenCreator(redditCredentials.clientId, redditCredentials.clientSecret, redditTokenFile)
     private val redditToken = redditTokenManager.getAccessToken()
 
 
     // maps a command name to a list of content URLs
-    private val redditClient = redditCommandMap.commands.shuffled().associateWith { RedditClient(redditCommandMap.getSubFromCommand(it), redditToken) }
+    private val redditClient = redditCommandMap.commands.shuffled()
+        .associateWith { RedditClient(redditCommandMap.getSubFromCommand(it), redditToken) }
 
     // map of command name to latest refresh timestamp
     private val refreshCache = HashMap<String, Long>()
@@ -25,7 +31,7 @@ class RedditCommandManager(private val redditCommandMap: RedditCommandMap, reddi
     init {
         log.info("Initialized Command Manager with ${redditCommandMap.commands.size} commands: ${redditCommandMap.commands.joinToString { it }}")
         // initialize refresh cache
-        redditCommandMap.commands.forEach {
+        redditCommandMap.commands.sorted().forEach {
             refreshCache[it] = System.currentTimeMillis()
         }
 
@@ -37,9 +43,8 @@ class RedditCommandManager(private val redditCommandMap: RedditCommandMap, reddi
         return "Available commands (queue/cache): ${redditCommandMap.commands.joinToString { "!$it (${redditClient[it]?.getQueueSize()}/${redditClient[it]?.getCacheSize()})" }}"
     }
 
-    fun getAvailableCommands(): List<String> {
-        return redditCommandMap.commands.filter { (redditClient[it]?.getQueueSize() ?: 0) > 0 }
-    }
+    fun getAllCommands() = redditCommandMap.commands
+    fun getAvailableCommands() = getAllCommands().filter { (redditClient[it]?.getQueueSize() ?: 0) > 0 }
 
     /**
      * Periodically refreshes the cache of posts for each command
@@ -49,7 +54,7 @@ class RedditCommandManager(private val redditCommandMap: RedditCommandMap, reddi
     fun refreshCache() {
         GlobalScope.launch {
             while (true) {
-                val cmd = refreshCache.minByOrNull { it.value }!!.key
+                val cmd = refreshCache.minBy { it.value }.key
                 if (redditClient[cmd]!!.refreshCache()) {
                     refreshCache[cmd] = System.currentTimeMillis()
                 }

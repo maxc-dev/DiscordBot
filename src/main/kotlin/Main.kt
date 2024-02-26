@@ -29,7 +29,7 @@ class Launcher {
         val channels = config.getChannels()
         val emojis = config.getEmojis()
 
-        val botMain = BotMain(discordToken, redditCommandManager, channels, emojis)
-        botMain.start()
+        val discordCommandInput = DiscordCommandInput(discordToken, redditCommandManager, channels, emojis)
+        discordCommandInput.start()
     }
 }
